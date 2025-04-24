@@ -1,82 +1,174 @@
 
 /**
- * Write a description of class Horse here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
+ * Represents individual race participants.
+ *
+ * @AssiaOuaoua (your name)
+ * @v1.0 (a version number or a date)
  */
+import java.util.ArrayList;
+import java.util.Random;
+
 public class Horse
 {
     //Fields of class Horse
-    char horseSymbol;
     String horseName;
+    String horseBreed;
+    String horseCoatcolor;
+    ArrayList<String> horseAccessories = new ArrayList<String>();
+    String horseShoe;
+    char horseSymbol;
+    int horseDistance;
+    boolean fallen;
     double horseConfidence;
-    int distanceTravelled;
-    boolean hasFallen;
-    
+    double horsespeed;
+
     //Constructor of class Horse
     /**
      * Constructor for objects of class Horse
      */
-    public Horse(char horseSymbol, String horseName, double horseConfidence)
+    public Horse(char horseSymbol, String horseName, String breed, String coatcolor)
     {
-       this.horseSymbol = horseSymbol;
-       this.horseName = horseName;
-       this.horseConfidence = horseConfidence;
-       this.distanceTravelled = 0;
+        Random rand = new Random();
+        this.horseSymbol = horseSymbol;
+        this.horseName = horseName;
+        this.horseBreed = breed;
+        this.horseCoatcolor = coatcolor;
+        this.horseConfidence = rand.nextDouble();
+        this.horsespeed = rand.nextInt(10)+1;
     }
-    
-    
-    
+
+    public Horse(char horseSymbol, String horseName, String breed, String coatcolor, String horseshoe, ArrayList<String> accessories)
+    {
+        Random rand = new Random();
+        this.horseSymbol = horseSymbol;
+        this.horseName = horseName;
+        this.horseCoatcolor = coatcolor;
+        this.horseBreed = breed;
+        this.horseShoe = horseshoe;
+        this.horseAccessories = accessories;
+        this.horseConfidence = rand.nextDouble();
+        this.horsespeed = rand.nextInt(10)+1;
+    }
+
+
     //Other methods of class Horse
     public void fall()
     {
-        hasFallen = true;
+        this.fallen = true;
     }
-    
+
+    //Getter Methods
     public double getConfidence()
     {
-        return horseConfidence;
+        return this.horseConfidence;
     }
-    
+
     public int getDistanceTravelled()
     {
-        return distanceTravelled;
+        return this.horseDistance;
     }
-    
+
     public String getName()
     {
-        return horseName;
+        return this.horseName;
     }
-    
+
     public char getSymbol()
     {
-        return horseSymbol;
+        return this.horseSymbol;
     }
-    
+
+    public double getSpeed(){
+        return this.horsespeed;
+    }
+
     public void goBackToStart()
     {
-        distanceTravelled = 0;
+        horseDistance = 0;
     }
-    
+
     public boolean hasFallen()
     {
-        return hasFallen;
+        if(fallen == true){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
     public void moveForward()
     {
-        distanceTravelled += 1;
+        horseDistance += (int)horsespeed;
+    }
+
+    public void AttributeImpacts(){
+        if(horseBreed.equals("Quarter Horse")){
+            horsespeed += 2;
+            horseConfidence += 0.1;
+        }
+        else if(horseBreed.equals("Arabian")){
+            horseConfidence += 0.2;
+            horsespeed += 1;
+        }
+        else if(horseBreed.equals("Thoroughbred")){
+            horsespeed += 1;
+            horseConfidence += 0.3;
+        }
+
+        for(String accessory : horseAccessories) {
+            if (accessory.equals("Saddle")) {
+                horsespeed += 1;
+            } 
+            else if (accessory.equals("Bridle")) {
+                horseConfidence += 0.2;
+            } 
+            else if(accessory.equals("Hat")){
+                horseConfidence += 0.1;
+            }
+        }
+
+        if(horseShoe.equals("Regular")){
+            horsespeed += 1;
+        }
+        else if(horseShoe.equals("Lightweight")){
+            horsespeed += 2;
+            horseConfidence += 0.1;
+        }
+        else if(horseShoe.equals("Iron")){
+            horsespeed += 3;
+            horseConfidence += 0.2;
+        }
+    }
+
+    //Setter Methods
+    public void setName(String newName)
+    {
+        this.horseName = newName;
+    }
+
+    public void setBreed(String newBreed)
+    {
+        this.horseBreed = newBreed;
+    }
+
+    public void setCoatColor(String newCoatColor)
+    {
+        this.horseCoatcolor = newCoatColor;
     }
 
     public void setConfidence(double newConfidence)
     {
-        horseConfidence = newConfidence;
+        this.horseConfidence = newConfidence;
     }
-    
+
+    public void setSpeed(double newspeed){
+        this.horsespeed = newspeed;
+    }
+
     public void setSymbol(char newSymbol)
     {
-        horseSymbol = newSymbol;
+        this.horseSymbol = newSymbol;
     }
-    
+
 }
