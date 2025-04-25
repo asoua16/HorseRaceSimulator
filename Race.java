@@ -59,43 +59,60 @@ public class Race
      */
     public void startRace() {
         weather();
-        // Use Swing Timer for animation
+        long raceStartTime = System.currentTimeMillis(); // start time
+    
         Timer timer = new Timer(50, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 boolean finished = false;
-                int allfallen = 0; 
-                
+                int allfallen = 0;
+                String winnerName = ""; // store winner name
+                long raceEndTime = 0;   // store end time
+    
                 for (Horse horse : allhorses) {
                     moveHorse(horse);
+    
                     if (raceWonBy(horse)) {
-                        System.out.println("Winner: " + horse.getName());
+                        winnerName = horse.getName();
+                        raceEndTime = System.currentTimeMillis(); // end time
+                        double raceTimeSeconds = (raceEndTime - raceStartTime) / 1000.0;
+                        horse.addSpeed(raceTimeSeconds, raceLength);
                         finished = true;
+                        horse.addwin();
                         break;
-                    }
-                    else if(horse.hasFallen()){
+                    } else if (horse.hasFallen()) {
                         allfallen++;
                         horse.setSymbol('X');
+                        break;
                     }
-
-                    if (allfallen == allhorses.size()){
-                        JOptionPane.showMessageDialog(frame, "All Horses have Fallen");
-                        finished = true;
+    
+                    if (allfallen == allhorses.size()) {
+                        JOptionPane.showMessageDialog(frame, "All horses have fallen!");
+                        finished = false;
                         break;
                     }
                 }
-                
+    
                 racetrack.repaint();
                 allfallen = 0;
-
-                if (finished){
-                    ((Timer)e.getSource()).stop();
-                    JOptionPane.showMessageDialog(frame, "Race Over");
+    
+                if (finished) {
+                    ((Timer) e.getSource()).stop();
+    
+                    double totalTime = (System.currentTimeMillis() - raceStartTime) / 1000.0;
+    
+                    JOptionPane.showMessageDialog(
+                        frame,
+                        "Race Over!\nWinner: " + winnerName + "\nTime: " + totalTime + " seconds"
+                    );
+    
                     frame.dispose();
                 }
             }
         });
+    
         timer.start();
     }
+    
 
     private void weather(){
         String weather = MainMenu.getweather();
@@ -120,13 +137,11 @@ public class Race
 
     private void moveHorse(Horse theHorse) {
         if (!theHorse.hasFallen()) {
-            // Check for fall first
             if (Math.random() < (0.1 * theHorse.getConfidence())) {
                 theHorse.fall();
-                return; // No movement after falling
+                return;
             }
             
-            // Then check for movement
             if (Math.random() < theHorse.getConfidence()) {
                 theHorse.moveForward();
             }

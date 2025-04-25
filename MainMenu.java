@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.*;
 
 public class MainMenu {
     private static JSlider lancounterSlider;
@@ -73,7 +74,7 @@ public class MainMenu {
 
         //Main Menu Title
         JLabel titleLabel = new JLabel("Main Menu", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 24)); // Optional: make it big and bold
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
 
         gbc.gridy = 0;
         gbc.gridwidth = 1;
@@ -109,6 +110,8 @@ public class MainMenu {
             int distance = gettracklength();
             int lanes = getlanecount();
             Race newrace = new Race(distance, lanes);
+            ArrayList<Horse> horses = HorseManage.getHorses();
+            newrace.addHorses(horses);
             newrace.startRace();
         });
 

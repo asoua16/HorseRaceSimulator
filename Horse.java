@@ -21,6 +21,8 @@ public class Horse
     boolean fallen;
     double horseConfidence;
     double horsespeed;
+    ArrayList<Double> horseSpeed = new ArrayList<Double>();
+    int wins ;
 
     //Constructor of class Horse
     /**
@@ -35,6 +37,7 @@ public class Horse
         this.horseCoatcolor = coatcolor;
         this.horseConfidence = rand.nextDouble();
         this.horsespeed = rand.nextInt(10)+1;
+        this.wins = 0;
     }
 
     public Horse(char horseSymbol, String horseName, String breed, String coatcolor, String horseshoe, ArrayList<String> accessories)
@@ -51,7 +54,6 @@ public class Horse
     }
 
 
-    //Other methods of class Horse
     public void fall()
     {
         this.fallen = true;
@@ -76,6 +78,26 @@ public class Horse
     public char getSymbol()
     {
         return this.horseSymbol;
+    }
+
+    public String getBreed()
+    {
+        return this.horseBreed;
+    }
+
+    public String getColor()
+    {
+        return this.horseCoatcolor;
+    }
+
+    public String getHorseshoe()
+    {
+        return this.horseShoe;
+    }
+
+    public ArrayList<String> getAccessories()
+    {
+        return this.horseAccessories;
     }
 
     public double getSpeed(){
@@ -139,6 +161,15 @@ public class Horse
             horsespeed += 3;
             horseConfidence += 0.2;
         }
+    }
+
+    public void addSpeed(double time, int tracklength){
+        double speed = (tracklength / time) * 0.1;
+        horseSpeed.add(speed);
+    }
+
+    public void addwin(){
+        this.wins++;
     }
 
     //Setter Methods

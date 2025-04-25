@@ -32,9 +32,9 @@ public class Racetrack extends JPanel {
             for (int i = 0; i < horses.size(); i++) {
                 Horse horse = horses.get(i);
                 
-                double progress = (double) horse.getDistanceTravelled() / MainMenu.gettracklength(); // Use instance variable
+                double progress = (double) horse.getDistanceTravelled() / MainMenu.gettracklength(); 
                 int baseRadius = Math.min(panelWidth, panelHeight) / 3;
-                int laneRadius = baseRadius - (i * 20); // Match track calculation
+                int laneRadius = baseRadius - (i * 20); 
                 
                 double angle = progress * 2 * Math.PI;
                 int horseX = centerX + (int)(laneRadius * Math.cos(angle));
@@ -46,25 +46,25 @@ public class Racetrack extends JPanel {
             for (int i = 0; i < horses.size(); i++) {
                 Horse horse = horses.get(i);
 
-                double progress = (double) horse.getDistanceTravelled() / MainMenu.gettracklength(); // Use instance variable
+                double progress = (double) horse.getDistanceTravelled() / MainMenu.gettracklength(); 
                 double angle = progress * 2 * Math.PI;
 
                 int horseX;
                 int horseY = 0;
 
-                // In horse positioning code:
+                // Calculate lane radius and vertical offset for figure-eight
                 int baseRadius = Math.min(panelWidth, panelHeight) / 4;
                 int laneRadius = baseRadius + (i * 20);
                 int verticalOffset = laneRadius;
                 
-                // Split progress into two halves
+                // Determine the position of the horse based on progress
                 if(progress < 0.5) { // Top circle
                     double circleProgress = progress * 2;
                     angle = circleProgress * 2 * Math.PI;
                     horseY -= verticalOffset;
-                } else { // Bottom circle (reverse direction)
+                } else { // Bottom circle 
                     double circleProgress = (progress - 0.5) * 2;
-                    angle = (1 - circleProgress) * 2 * Math.PI; // Reverse angle
+                    angle = (1 - circleProgress) * 2 * Math.PI; 
                     horseY += verticalOffset;
                 }
         
@@ -78,7 +78,7 @@ public class Racetrack extends JPanel {
             for (int i = 0; i < horses.size(); i++) {
                 Horse horse = horses.get(i);
 
-                double progress = (double) horse.getDistanceTravelled() / MainMenu.gettracklength(); // Use instance variable
+                double progress = (double) horse.getDistanceTravelled() / MainMenu.gettracklength(); 
 
                 
                 // Oval-specific calculations
@@ -88,16 +88,16 @@ public class Racetrack extends JPanel {
 
                 double angle = progress * 2 * Math.PI;
 
-                // Calculate oval dimensions for this horse's lane
+                // Calculate oval dimensions for  horse lane
                 int laneWidth = baseWidth + (i * laneSpacing * 2);
                 int laneHeight = baseHeight + (i * laneSpacing);
                 
-                // Oval positioning (stretched circle coordinates)
+                // Oval positioning 
                 int horseX = centerX + (int)((laneWidth/2) * Math.cos(angle));
                 int horseY = centerY + (int)((laneHeight/2) * Math.sin(angle));
 
-                g2d.setFont(new Font("Arial", Font.BOLD, 14)); // Optional: adjust font
-                g2d.drawString(horse.getSymbol() + "", horseX - 4, horseY + 5); // Center the symbol visually                            
+                g2d.setFont(new Font("Arial", Font.BOLD, 14)); 
+                g2d.drawString(horse.getSymbol() + "", horseX - 4, horseY + 5);                          
             } 
         }
     }
@@ -113,7 +113,7 @@ public class Racetrack extends JPanel {
     void CircleTrack(Graphics2D g2d, int centerX, int centerY, int panelWidth, int panelHeight) {
         int baseRadius = Math.min(panelWidth, panelHeight) / 3;
         
-        for(int i=0; i<lanecount; i++) { // Start at 0
+        for(int i=0; i<lanecount; i++) { 
             int laneRadius = baseRadius - (i * 20);
             
             if(laneRadius <= 0) break;
@@ -121,47 +121,47 @@ public class Racetrack extends JPanel {
             g2d.drawOval(
                 centerX - laneRadius,
                 centerY - laneRadius,
-                laneRadius * 2, // Diameter = 2 * radius
+                laneRadius * 2, 
                 laneRadius * 2
             );
         }
     }
 
     void OvalTrack(Graphics2D g2d, int centerX, int centerY, int panelWidth, int panelHeight) {
-        // 1. Calculate base dimensions based on panel size
-        int baseWidth = Math.min(panelWidth, panelHeight) * 2 / 3;  // Oval is wider than tall
+        // Calculate base dimensions 
+        int baseWidth = Math.min(panelWidth, panelHeight) * 2 / 3;  
         int baseHeight = Math.min(panelWidth, panelHeight) / 3;
-        int laneSpacing = 20;  // Pixels between lanes
+        int laneSpacing = 20;  
     
-        // 2. Draw concentric oval lanes
+        // Draw concentric oval lanes
         for(int i = 0; i < lanecount; i++) {  // Start from 0
-            // 3. Calculate lane dimensions
+            // Calculate lane dimensions
             int laneWidth = baseWidth + (i * laneSpacing * 2);
             int laneHeight = baseHeight + (i * laneSpacing);
             
-            // 4. Calculate top-left position (centered)
+            // Calculate position (centered)
             int topLeftX = centerX - laneWidth / 2;
             int topLeftY = centerY - laneHeight / 2;
             
-            // 5. Draw the oval lane
+            // Draw the oval lane
             g2d.drawOval(topLeftX, topLeftY, laneWidth, laneHeight);
         }
     }
 
     void FigureEightTrack(Graphics2D g2d, int centerX, int centerY, int panelWidth, int panelHeight) {
-        // 1. Calculate base dimensions
-        int baseRadius = Math.min(panelWidth, panelHeight) / 4; // Smaller base size for 8 shape
-        int laneSpacing = 20; // Space between lanes
+        //Calculate base dimensions
+        int baseRadius = Math.min(panelWidth, panelHeight) / 4; 
+        int laneSpacing = 20;
         
-        // 2. Draw concentric figure-eight lanes
+        //Draw figure-eight lanes
         for(int i = 0; i < lanecount; i++) {
-            // 3. Calculate lane radius
+            // Calculate lane radius
             int laneRadius = baseRadius + (i * laneSpacing);
             
-            // 4. Calculate vertical offset for loops
-            int verticalOffset = laneRadius; // Circles should intersect at center
+            //Calculate vertical offset for loops
+            int verticalOffset = laneRadius; 
             
-            // 5. Draw top circle (clockwise)
+            // Draw top circle
             g2d.drawOval(
                 centerX - laneRadius,
                 centerY - laneRadius - verticalOffset,
@@ -169,7 +169,7 @@ public class Racetrack extends JPanel {
                 laneRadius * 2
             );
             
-            // 6. Draw bottom circle (counter-clockwise)
+            // Draw bottom circle
             g2d.drawOval(
                 centerX - laneRadius,
                 centerY - laneRadius + verticalOffset,

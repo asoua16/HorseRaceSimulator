@@ -1,6 +1,11 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
+import java.util.List;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 public class HorseManage {
 
@@ -8,12 +13,9 @@ public class HorseManage {
     private static JComboBox<String> colorsBox;
     private static JComboBox<String> horseshoeBox;
     private static ArrayList<Horse> horses = new ArrayList<>();
-
-    // Static references to the main frame and the panel holding horse buttons
     private static JFrame mainFrame;
     private static JPanel listPanel;
 
-    // Combo box factories
     public static JComboBox<String> breedtypes() {
         String[] breedStrings = {"Quarter Horse", "Arabian", "Thoroughbred"};
         breedtypesBox = new JComboBox<>(breedStrings);
@@ -50,7 +52,7 @@ public class HorseManage {
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         gbc.gridx    = 0;
         gbc.gridy    = 0;
-        gbc.gridwidth = 2; // span two columns
+        gbc.gridwidth = 2; 
         panel.add(titleLabel, gbc);
 
         // Horse Name
@@ -92,7 +94,7 @@ public class HorseManage {
         JCheckBox accessoriesCheckbox = new JCheckBox("Accessories");
         panel.add(accessoriesCheckbox, gbc);
 
-        // Create accessory components outside the listener so we can remove them later
+        // Create accessory components 
         JLabel horseShoeLabel   = new JLabel("Horse Shoe:");
         JComboBox<String> horseShoeBox = horseshoetypes(); 
         JCheckBox saddleCheckbox  = new JCheckBox("Saddle");
@@ -161,17 +163,16 @@ public class HorseManage {
                 newHorse = new Horse(symbol, name, breed, color);
             }
 
-            // Check for duplicates BEFORE adding
             if (horses.contains(newHorse)) {
                 JOptionPane.showMessageDialog(frame, "Horse already exists!");
             } else {
                 horses.add(newHorse);
                 JOptionPane.showMessageDialog(frame, "Horse added successfully!");
             }
-            frame.dispose(); // Close the add-horse window
-
-            // Update the main Horse Management list
+            frame.dispose(); 
             updateHorseList();
+            saveHorsesToCSV();
+
         });
         gbc.gridy = 10;
         gbc.gridwidth = 1;
@@ -181,12 +182,12 @@ public class HorseManage {
         frame.setVisible(true);
     }
 
-    // The main Horse Management window
+    //Horse Management window
     public static void HorseMain(String[] args) {
         if (mainFrame == null) {
             mainFrame = new JFrame("Horse Management System");
             mainFrame.setSize(600, 600);
-            mainFrame.setLocationRelativeTo(null); // Center on screen
+            mainFrame.setLocationRelativeTo(null); 
 
             JPanel mainPanel = new JPanel(new GridBagLayout());
             GridBagConstraints gbc = new GridBagConstraints();
@@ -209,7 +210,7 @@ public class HorseManage {
             mainPanel.add(addHorseButton, gbc);
             addHorseButton.addActionListener(e -> addhorse());
 
-            // Panel to hold horse buttons (list)
+            // Panel to hold horse buttons
             listPanel = new JPanel(new GridBagLayout());
             gbc.gridy = 2;
             gbc.gridwidth = 2;
@@ -220,20 +221,23 @@ public class HorseManage {
 
             JButton backButton = new JButton("Back to Main Menu");
             backButton.addActionListener(e -> {
-                mainFrame.dispose(); // Close the Horse Management window
-                MainMenu.main(null); // Open the main menu again
+                mainFrame.setVisible(false);
+                MainMenu.main(null);  
             });
             gbc.gridy = 3;
             gbc.gridwidth = 2;
             mainPanel.add(backButton, gbc);
+            loadHorsesFromCSV();
 
 
         }
-        // Call update to reflect the latest horse list
         updateHorseList();
     }
 
-    // Rebuilds the panel that displays the buttons for each horse
+    public static ArrayList<Horse> getHorses() {
+        return horses;
+    }
+
     private static void updateHorseList(){
         listPanel.removeAll();
         GridBagConstraints gbc = new GridBagConstraints();
@@ -246,7 +250,6 @@ public class HorseManage {
             JButton horseButton = new JButton(horse.getName() + " (" + horse.getSymbol() + ")");
             gbc.gridy = row++;
             horseButton.addActionListener(e -> {
-                // Handle button click (e.g. show details, edit, etc.)
                 System.out.println("Clicked: " + horse.getName());
             });
             listPanel.add(horseButton, gbc);
@@ -254,4 +257,50 @@ public class HorseManage {
         listPanel.revalidate();
         listPanel.repaint();
     }
+
+    public static void saveHorsesToCSV() {
+        try (FileWriter writer = new FileWriter("horses.csv")) {
+            writer.append("Name,Symbol,Breed,Color,Horseshoe,Accessories\n");
+            
+            for (Horse horse : horses) {
+                writer.append(horse.getName()).append(",")
+                    .append(String.valueOf(horse.getSymbol())).append(",")
+                    .append(horse.getBreed()).append(",")
+                    .append(horse.getColor()).append(",")
+                    .append(horse.getHorseshoe()).append(",")
+                    .append(String.join(";", horse.getAccessories())) 
+                    .append("\n");
+            }
+            System.out.println("Horses saved to CSV file.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void loadHorsesFromCSV() {
+        try (BufferedReader reader = new BufferedReader(new FileReader("horses.csv"))) {
+            String line;
+            reader.readLine();
+            
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data.length >= 6) {
+                    String name = data[0];
+                    char symbol = data[1].charAt(0);
+                    String breed = data[2];
+                    String color = data[3];
+                    String horseshoe = data[4];
+                    String[] accessories = data[5].split(";");
+
+                    Horse horse = new Horse(symbol, name, breed, color, horseshoe, new ArrayList<>(List.of(accessories)));
+                    horses.add(horse);
+                }
+            }
+            System.out.println("Horses loaded from CSV file.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
