@@ -7,6 +7,7 @@ public class Racetrack extends JPanel {
     private ArrayList<Horse> horses;
     private String lanetype;
 
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

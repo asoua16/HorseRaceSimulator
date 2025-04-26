@@ -120,10 +120,18 @@ public class MainMenu {
             HorseManage.HorseMain(null);
         });
 
+        JButton StatsButton = new JButton("Stats");
+        StatsButton.addActionListener(e -> {
+            Stats.StatsMain(null);
+        });
+
         gbc.gridy = 9;
         panel.add(HorseManagement, gbc);
         gbc.gridy = 10;
+        panel.add(StatsButton, gbc);
+        gbc.gridy = 11;
         panel.add(STARTbutton, gbc);
+
 
         frame.add(panel);
         frame.setVisible(true);

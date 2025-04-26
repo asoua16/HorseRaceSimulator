@@ -1,11 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
-import java.util.List;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.*;
 
 public class HorseManage {
 
@@ -221,15 +217,12 @@ public class HorseManage {
 
             JButton backButton = new JButton("Back to Main Menu");
             backButton.addActionListener(e -> {
-                mainFrame.setVisible(false);
-                MainMenu.main(null);  
+                mainFrame.dispose();
             });
             gbc.gridy = 3;
             gbc.gridwidth = 2;
             mainPanel.add(backButton, gbc);
             loadHorsesFromCSV();
-
-
         }
         updateHorseList();
     }
@@ -251,6 +244,7 @@ public class HorseManage {
             gbc.gridy = row++;
             horseButton.addActionListener(e -> {
                 System.out.println("Clicked: " + horse.getName());
+                displayHorse(horse);
             });
             listPanel.add(horseButton, gbc);
         }
@@ -258,49 +252,200 @@ public class HorseManage {
         listPanel.repaint();
     }
 
+    public static void displayHorse(Horse horse) {
+        JFrame horseFrame = new JFrame("Horse Details");
+        horseFrame.setSize(400, 300);
+        horseFrame.setLocationRelativeTo(null); // Center on screen
+
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets   = new Insets(10, 10, 10, 10);
+        gbc.fill     = GridBagConstraints.HORIZONTAL;
+        gbc.gridx    = 0;
+        gbc.anchor   = GridBagConstraints.CENTER;
+
+        // Title
+        JLabel titleLabel = new JLabel("Horse Details", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        gbc.gridy    = 0;
+        gbc.gridwidth = 2; 
+        panel.add(titleLabel, gbc);
+
+        // Horse Name
+        gbc.gridwidth = 1;
+        gbc.gridy    = 1;
+        gbc.gridx    = 0;
+        panel.add(new JLabel("Horse Name:"), gbc);
+        JTextField horseNameField = new JTextField(horse.getName(), 20);
+        horseNameField.setEditable(false);
+        gbc.gridx    = 1;
+        panel.add(horseNameField, gbc);
+
+        // Horse Symbol
+        gbc.gridy    = 2;
+        gbc.gridx    = 0;
+        panel.add(new JLabel("Horse Symbol:"), gbc);
+        JTextField horseSymbolField = new JTextField(String.valueOf(horse.getSymbol()), 20);
+        horseSymbolField.setEditable(false);
+        gbc.gridx    = 1;
+        panel.add(horseSymbolField, gbc);
+
+        // Breed
+        gbc.gridy    = 3;
+        gbc.gridx    = 0;
+        panel.add(new JLabel("Breed:"), gbc);
+        JTextField breedField = new JTextField(horse.getBreed(), 20);
+        breedField.setEditable(false);
+        gbc.gridx    = 1;
+        panel.add(breedField, gbc);
+
+        // Color
+        gbc.gridy    = 4;
+        gbc.gridx    = 0;
+        panel.add(new JLabel("Color:"), gbc);
+        JTextField colorField = new JTextField(horse.getColor(), 20);
+        colorField.setEditable(false);
+        gbc.gridx    = 1;
+        panel.add(colorField, gbc);
+
+        horseFrame.add(panel);
+        horseFrame.setVisible(true);
+
+        //Horse Speed Average
+        gbc.gridy = 5;
+        gbc.gridx = 0;
+        panel.add(new JLabel("Horse Speed Average:"), gbc);
+        JTextField horseSpeedField = new JTextField(String.valueOf(horse.getaverageSpeed()), 20);
+        horseSpeedField.setEditable(false);
+        gbc.gridx = 1;
+        panel.add(horseSpeedField, gbc);
+        if (horse.getaverageSpeed() > 0) {
+            horseSpeedField.setBackground(Color.GREEN);
+        } else {
+            horseSpeedField.setBackground(Color.RED);
+        }
+        horseSpeedField.setOpaque(true); 
+
+    }
+
     public static void saveHorsesToCSV() {
-        try (FileWriter writer = new FileWriter("horses.csv")) {
-            writer.append("Name,Symbol,Breed,Color,Horseshoe,Accessories\n");
-            
-            for (Horse horse : horses) {
-                writer.append(horse.getName()).append(",")
-                    .append(String.valueOf(horse.getSymbol())).append(",")
-                    .append(horse.getBreed()).append(",")
-                    .append(horse.getColor()).append(",")
-                    .append(horse.getHorseshoe()).append(",")
-                    .append(String.join(";", horse.getAccessories())) 
-                    .append("\n");
-            }
-            System.out.println("Horses saved to CSV file.");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    public static void loadHorsesFromCSV() {
-        try (BufferedReader reader = new BufferedReader(new FileReader("horses.csv"))) {
-            String line;
-            reader.readLine();
-            
-            while ((line = reader.readLine()) != null) {
-                String[] data = line.split(",");
-                if (data.length >= 6) {
-                    String name = data[0];
-                    char symbol = data[1].charAt(0);
-                    String breed = data[2];
-                    String color = data[3];
-                    String horseshoe = data[4];
-                    String[] accessories = data[5].split(";");
-
-                    Horse horse = new Horse(symbol, name, breed, color, horseshoe, new ArrayList<>(List.of(accessories)));
-                    horses.add(horse);
+        try {
+            FileWriter writer = new FileWriter("horses.csv");
+            writer.write(
+                "Name,Symbol,Breed,CoatColor,Horseshoe,Accessories," +
+                "Confidence,HorseSpeed,SpeedHistory," +
+                "Wins,Races,ConfidenceHistory\n"
+            );
+    
+            for (Horse h : horses) {
+                String accCell = "";
+                for (int i = 0; i < h.horseAccessories.size(); i++) {
+                    accCell += h.horseAccessories.get(i);
+                    if (i < h.horseAccessories.size() - 1) {
+                        accCell += ";";
+                    }
                 }
+    
+                String speedHist = "";
+                for (int i = 0; i < h.horseSpeed.size(); i++) {
+                    speedHist += h.horseSpeed.get(i);
+                    if (i < h.horseSpeed.size() - 1) {
+                        speedHist += ";";
+                    }
+                }
+    
+                String confHist = "";
+                for (int i = 0; i < h.horseConfidenceList.size(); i++) {
+                    confHist += h.horseConfidenceList.get(i);
+                    if (i < h.horseConfidenceList.size() - 1) {
+                        confHist += ";";
+                    }
+                }
+    
+                String line =
+                    h.horseName + "," +
+                    h.horseSymbol + "," +
+                    h.horseBreed + "," +
+                    h.horseCoatcolor + "," +
+                    (h.horseShoe == null ? "" : h.horseShoe) + "," +
+                    accCell + "," +
+                    h.horseConfidence + "," +
+                    h.horsespeed + "," +
+                    speedHist + "," +
+                    h.wins + "," +
+                    h.races + "," +
+                    confHist + "\n";
+    
+                writer.write(line);
             }
-            System.out.println("Horses loaded from CSV file.");
+    
+            writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-}
+    
+    public static void loadHorsesFromCSV() {
+        horses.clear();
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("horses.csv"));
+            reader.readLine(); // skip the header
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] f = line.split(",", -1);
+    
+                String name = f[0];
+                char symbol = f[1].isEmpty() ? '?' : f[1].charAt(0);
+                String breed = f[2];
+                String coatColor = f[3];
+                String shoe = f[4];
+    
+                ArrayList<String> accessories = new ArrayList<>();
+                if (!f[5].isEmpty()) {
+                    String[] parts = f[5].split(";");
+                    for (String s : parts) {
+                        accessories.add(s);
+                    }
+                }
+    
+                double confidence = Double.parseDouble(f[6]);
+                double speed = Double.parseDouble(f[7]);
+    
+                ArrayList<Double> speedHist = new ArrayList<>();
+                if (!f[8].isEmpty()) {
+                    String[] sp = f[8].split(";");
+                    for (String s : sp) {
+                        speedHist.add(Double.parseDouble(s));
+                    }
+                }
+    
+                int wins = Integer.parseInt(f[9]);
+                int races = Integer.parseInt(f[10]);
+    
+                ArrayList<Double> confHist = new ArrayList<>();
+                if (f.length > 11 && !f[11].isEmpty()) {
+                    String[] ch = f[11].split(";");
+                    for (String s : ch) {
+                        confHist.add(Double.parseDouble(s));
+                    }
+                }
+    
+                // create horse and set fields
+                Horse h = new Horse(symbol, name, breed, coatColor);
+                h.horseShoe = shoe;
+                h.horseAccessories = accessories;
+                h.horseConfidence = confidence;
+                h.horsespeed = speed;
+                h.horseSpeed = speedHist;
+                h.wins = wins;
+                h.races = races;
+                h.horseConfidenceList = confHist;
+    
+                horses.add(h);
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    } 
+}   

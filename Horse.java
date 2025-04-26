@@ -22,7 +22,10 @@ public class Horse
     double horseConfidence;
     double horsespeed;
     ArrayList<Double> horseSpeed = new ArrayList<Double>();
-    int wins ;
+    int wins;
+    int races;
+    int falls;
+    ArrayList<Double> horseConfidenceList = new ArrayList<Double>();
 
     //Constructor of class Horse
     /**
@@ -37,7 +40,6 @@ public class Horse
         this.horseCoatcolor = coatcolor;
         this.horseConfidence = rand.nextDouble();
         this.horsespeed = rand.nextInt(10)+1;
-        this.wins = 0;
     }
 
     public Horse(char horseSymbol, String horseName, String breed, String coatcolor, String horseshoe, ArrayList<String> accessories)
@@ -109,9 +111,32 @@ public class Horse
         horseDistance = 0;
     }
 
+    public double getwinratio(){
+        double ratio = (double) wins / (double) races;
+        return ratio;
+    }
+
+    public double getaverageSpeed(){
+        double sum = 0;
+        for (double speed : horseSpeed) {
+            sum += speed;
+        }
+        System.out.println(sum/horseSpeed.size());
+        return sum / horseSpeed.size();
+    }
+
+    public double getaverageConfidence(){
+        double sum = 0;
+        for (double confidence : horseConfidenceList) {
+            sum += confidence;
+        }
+        return sum / horseConfidenceList.size();
+    }
+
     public boolean hasFallen()
     {
         if(fallen == true){
+            this.falls++;
             return true;
         }
         else{
@@ -123,6 +148,8 @@ public class Horse
     {
         horseDistance += (int)horsespeed;
     }
+
+    
 
     public void AttributeImpacts(){
         if(horseBreed.equals("Quarter Horse")){
@@ -168,10 +195,14 @@ public class Horse
         horseSpeed.add(speed);
     }
 
+    public void addrace(){
+        this.races++;
+    }
+
     public void addwin(){
         this.wins++;
     }
-
+    
     //Setter Methods
     public void setName(String newName)
     {
@@ -191,6 +222,7 @@ public class Horse
     public void setConfidence(double newConfidence)
     {
         this.horseConfidence = newConfidence;
+        this.horseConfidenceList.add(this.horseConfidence);
     }
 
     public void setSpeed(double newspeed){

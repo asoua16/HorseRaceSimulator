@@ -2,6 +2,8 @@ import java.util.ArrayList;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.Math;
 
 /**
@@ -15,7 +17,7 @@ public class Race
 {
     private int raceLength;
     private int laneCount;
-    private ArrayList<Horse> allhorses = new ArrayList<>();
+    private static ArrayList<Horse> allhorses = new ArrayList<>();
     private JFrame frame;
     private static Racetrack racetrack;
 
@@ -59,26 +61,29 @@ public class Race
      */
     public void startRace() {
         weather();
-        long raceStartTime = System.currentTimeMillis(); // start time
+        long raceStartTime = System.currentTimeMillis();
     
         Timer timer = new Timer(50, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 boolean finished = false;
                 int allfallen = 0;
-                String winnerName = ""; // store winner name
-                long raceEndTime = 0;   // store end time
+                String winnerName = "None"; 
+                long raceEndTime = 0;
+                double raceTimeSeconds =0;  
     
                 for (Horse horse : allhorses) {
                     moveHorse(horse);
     
                     if (raceWonBy(horse)) {
                         winnerName = horse.getName();
-                        raceEndTime = System.currentTimeMillis(); // end time
-                        double raceTimeSeconds = (raceEndTime - raceStartTime) / 1000.0;
+                        raceEndTime = System.currentTimeMillis();
+                        raceTimeSeconds = (raceEndTime - raceStartTime) / 1000.0;
                         horse.addSpeed(raceTimeSeconds, raceLength);
                         finished = true;
                         horse.addwin();
+                        horse.addrace();
                         break;
+
                     } else if (horse.hasFallen()) {
                         allfallen++;
                         horse.setSymbol('X');
@@ -87,7 +92,8 @@ public class Race
     
                     if (allfallen == allhorses.size()) {
                         JOptionPane.showMessageDialog(frame, "All horses have fallen!");
-                        finished = false;
+                        finished = true;
+                        horse.addrace();
                         break;
                     }
                 }
@@ -98,21 +104,78 @@ public class Race
                 if (finished) {
                     ((Timer) e.getSource()).stop();
     
-                    double totalTime = (System.currentTimeMillis() - raceStartTime) / 1000.0;
-    
+                    double totalTime = (System.currentTimeMillis() - raceStartTime) / 1000.0;    
                     JOptionPane.showMessageDialog(
                         frame,
                         "Race Over!\nWinner: " + winnerName + "\nTime: " + totalTime + " seconds"
                     );
-    
+
+                    Stats.racetracksort(raceTimeSeconds);
                     frame.dispose();
                 }
             }
         });
     
+        saveHorsesToCSV();
         timer.start();
     }
+
+    public static void saveHorsesToCSV() {
+        try {
+            FileWriter writer = new FileWriter("horses.csv", true);
+            writer.write(
+                "Name,Symbol,Breed,CoatColor,Horseshoe,Accessories," +
+                "Confidence,HorseSpeed,SpeedHistory," +
+                "Wins,Races,ConfidenceHistory\n"
+            );
     
+            for (Horse h : allhorses) {
+                String accCell = "";
+                for (int i = 0; i < h.horseAccessories.size(); i++) {
+                    accCell += h.horseAccessories.get(i);
+                    if (i < h.horseAccessories.size() - 1) {
+                        accCell += ";";
+                    }
+                }
+    
+                String speedHist = "";
+                for (int i = 0; i < h.horseSpeed.size(); i++) {
+                    speedHist += h.horseSpeed.get(i);
+                    if (i < h.horseSpeed.size() - 1) {
+                        speedHist += ";";
+                    }
+                }
+    
+                String confHist = "";
+                for (int i = 0; i < h.horseConfidenceList.size(); i++) {
+                    confHist += h.horseConfidenceList.get(i);
+                    if (i < h.horseConfidenceList.size() - 1) {
+                        confHist += ";";
+                    }
+                }
+    
+                String line =
+                    h.horseName + "," +
+                    h.horseSymbol + "," +
+                    h.horseBreed + "," +
+                    h.horseCoatcolor + "," +
+                    (h.horseShoe == null ? "" : h.horseShoe) + "," +
+                    accCell + "," +
+                    h.horseConfidence + "," +
+                    h.horsespeed + "," +
+                    speedHist + "," +
+                    h.wins + "," +
+                    h.races + "," +
+                    confHist + "\n";
+    
+                writer.write(line);
+            }
+    
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void weather(){
         String weather = MainMenu.getweather();
