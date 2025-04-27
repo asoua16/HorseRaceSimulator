@@ -1,3 +1,9 @@
+/**
+ * Deals with the Racetrack GUI and drawing the horses on the track
+ *
+ * @AssiaOuaoua 
+ * @27/04/2025
+ */
 import java.awt.*;
 import java.util.ArrayList;
 import javax.swing.*;

@@ -1,3 +1,9 @@
+/**
+ * Horse Management System
+ *
+ * @AssiaOuaoua 
+ * @27/04/2025
+ */
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
@@ -34,7 +40,7 @@ public class HorseManage {
     public static void addhorse(){
         JFrame frame = new JFrame("Add Horse");
         frame.setSize(400, 500);
-        frame.setLocationRelativeTo(null); // Center on screen
+        frame.setLocationRelativeTo(null); 
 
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -228,10 +234,12 @@ public class HorseManage {
         updateHorseList();
     }
 
+    //Getter
     public static ArrayList<Horse> getHorses() {
         return horses;
     }
 
+    //Method to update the horse list in the GUI
     private static void updateHorseList(){
         listPanel.removeAll();
         GridBagConstraints gbc = new GridBagConstraints();
@@ -253,10 +261,11 @@ public class HorseManage {
         listPanel.repaint();
     }
 
+    //Method to display horse details in a new window
     public static void displayHorse(Horse horse) {
         JFrame horseFrame = new JFrame("Horse Details");
         horseFrame.setSize(500, 400);
-        horseFrame.setLocationRelativeTo(null); // Center on screen
+        horseFrame.setLocationRelativeTo(null); 
 
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -330,6 +339,7 @@ public class HorseManage {
         }
         horseSpeedField.setOpaque(true); 
 
+        //Win Ratio
         gbc.gridy = 6;
         gbc.gridx = 0;
         panel.add(new JLabel("Win Ratio:"), gbc);
@@ -347,6 +357,7 @@ public class HorseManage {
         }
         winRatioField.setOpaque(true);
 
+        //Confidence Average
         gbc.gridy = 7;
         gbc.gridx = 0;
         panel.add(new JLabel("Horse Confidence Average:"), gbc);
@@ -362,6 +373,8 @@ public class HorseManage {
         horseConfidenceField.setOpaque(true);
     }
 
+    //Method to save horses to CSV file
+    // The file will be named "horses.csv" and will be created in the current working directory.
     public static void saveHorsesToCSV() {
         try {
             FileWriter writer = new FileWriter("horses.csv");
@@ -419,11 +432,13 @@ public class HorseManage {
         }
     }
     
+    //Method to load horses from CSV file
+    // The file will be named "horses.csv" and will be created in the current working directory.
     public static void loadHorsesFromCSV() {
         horses.clear();
         try {
             BufferedReader reader = new BufferedReader(new FileReader("horses.csv"));
-            reader.readLine(); // skip the header
+            reader.readLine(); 
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] f = line.split(",", -1);
@@ -464,7 +479,6 @@ public class HorseManage {
                     }
                 }
     
-                // create horse and set fields
                 Horse h = new Horse(symbol, name, breed, coatColor);
                 h.horseShoe = shoe;
                 h.horseAccessories = accessories;

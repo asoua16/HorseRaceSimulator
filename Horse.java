@@ -2,8 +2,8 @@
 /**
  * Represents individual race participants.
  *
- * @AssiaOuaoua (your name)
- * @v1.0 (a version number or a date)
+ * @AssiaOuaoua 
+ * @27/04/2025
  */
 import java.util.ArrayList;
 import java.util.Random;
@@ -59,6 +59,7 @@ public class Horse
     }
 
 
+    //Method to set fallen to true
     public void fall()
     {
         this.fallen = true;
@@ -141,6 +142,7 @@ public class Horse
         return ratio;
     }
 
+    //Method to check if the horse has fallen
     public boolean hasFallen()
     {
         if(fallen == true){
@@ -152,13 +154,15 @@ public class Horse
         }
     }
 
+    //Method to move horse forward
     public void moveForward()
     {
         horseDistance += (int)horsespeed;
     }
 
-    
 
+    //Method to set attribute impacts on speed and confidence
+    //based on the horse breed, accessories and horseshoe
     public void AttributeImpacts(){
         if(horseBreed.equals("Quarter Horse")){
             horsespeed += 2;
@@ -207,10 +211,12 @@ public class Horse
 
     }
 
+    //Method to reset the speed of the horse
     public void resetSpeed() {
         this.horsespeed = this.basespeed;
     }
 
+    //Method to add speed to history
     public void addSpeed(double time, int trackLength) {
         if (time <= 0){
             return; 
@@ -219,31 +225,36 @@ public class Horse
         horseSpeedList.add(speed);
     }
 
+    //Method to add total number of races horse has participated in
     public void addrace(){
         this.races++;
     }
 
+    //Method to add total number of wins horse has achieved
     public void addwin(){
         this.wins++;
     }
 
+    //Method to add confidence to history
     public void addconfidence(){
         horseConfidenceList.add(horseConfidence);
     }
 
+    //Method to change the confidence of the horse
     public void changeConfidence(boolean increase) {
         if (increase) {
             horseConfidence += 0.1;
         } else {
             horseConfidence -= 0.1;
         }
-        // if out of [0,1], reset randomly
         if (horseConfidence < 0.0 || horseConfidence > 1.0) {
             horseConfidence = new Random().nextDouble();
         }
         addconfidence();
     }
 
+    //Method to limit the speed of the horse
+    //to a maximum of 10 and minimum of 1
     private void SpeedLimit() {
         if (this.horsespeed > 10) {
             setSpeed(new Random().nextInt(10) + 1);

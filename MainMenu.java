@@ -1,3 +1,9 @@
+/**
+ * Deals with GUI of the Main Menu
+ *
+ * @AssiaOuaoua 
+ * @27/04/2025
+ */
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
@@ -58,11 +64,12 @@ public class MainMenu {
         return (String) weatherconditionsBox.getSelectedItem();
     }
 
+    //Main Method
     public static void main(String[] args) {
 
         JFrame frame = new JFrame("Horse Race Simulator");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(600, 600);
+        frame.setSize(700, 800);
         frame.setLocationRelativeTo(null); // Center on screen
 
         JPanel panel = new JPanel(new GridBagLayout());
@@ -125,13 +132,19 @@ public class MainMenu {
             Stats.StatsMain(null);
         });
 
+        JButton BettingButton = new JButton("Betting");
+        BettingButton.addActionListener(e -> {
+            Betting.BettingMain(null);
+        });
+
         gbc.gridy = 9;
         panel.add(HorseManagement, gbc);
         gbc.gridy = 10;
         panel.add(StatsButton, gbc);
         gbc.gridy = 11;
+        panel.add(BettingButton, gbc);
+        gbc.gridy = 12;
         panel.add(STARTbutton, gbc);
-
 
         frame.add(panel);
         frame.setVisible(true);

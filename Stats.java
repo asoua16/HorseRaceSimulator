@@ -1,3 +1,9 @@
+/**
+ * Deals with Best Times Stats of the tracks
+ *
+ * @AssiaOuaoua 
+ * @27/04/2025
+ */
 import java.util.*;
 import javax.swing.*;
 import java.awt.*;
@@ -12,7 +18,12 @@ public class Stats {
     public static ArrayList<Double> bestTimesOval = new ArrayList<>();
     private static JFrame mainFrame;
 
-public static void StatsMain(String[] args) {
+    //Main Stats method to load stats from CSV and create the GUI
+    /**
+     * Main method to load stats from CSV and create the GUI
+     * @param args command line arguments
+     */
+    public static void StatsMain(String[] args) {
         loadStatsFromCSV();
         if (mainFrame == null) {
             mainFrame = new JFrame("Horse Management System");
@@ -34,12 +45,14 @@ public static void StatsMain(String[] args) {
             gbc.gridwidth = 2;
             mainPanel.add(titleLabel, gbc);
 
+            //Best Times 
             JButton bestTimeButton = new JButton("Best Times");
             bestTimeButton.addActionListener(e -> displayBestTimes());
             gbc.gridy = 1;
             mainPanel.add(bestTimeButton, gbc);
             gbc.gridy = 2;
 
+            //Back to Main Menu 
             JButton backButton = new JButton("Back to Main Menu");
             backButton.addActionListener(e -> {
                 mainFrame.dispose();
@@ -54,6 +67,7 @@ public static void StatsMain(String[] args) {
 
     }
 
+    //Method to display the best times in a new window
     public static void displayBestTimes() {
         JFrame frame = new JFrame("Best Times");
         frame.setSize(400, 300);
@@ -67,6 +81,7 @@ public static void StatsMain(String[] args) {
         gbc.gridx  = 0;
         gbc.anchor = GridBagConstraints.CENTER;
     
+        // Title
         JLabel title = new JLabel("Best Times", SwingConstants.CENTER);
         title.setFont(new Font("Arial", Font.BOLD, 24));
         gbc.gridy    = 0;
@@ -130,6 +145,7 @@ public static void StatsMain(String[] args) {
     }
     
 
+    //Method put the best times in the right track
     public static void racetracksort(double raceTime){
         if(MainMenu.getlanetype().equals("Circle")){
             bestTimesCircle = getBestTimes(bestTimesCircle, raceTime);         
@@ -143,6 +159,7 @@ public static void StatsMain(String[] args) {
         saveStatsToCSV();
     }
 
+    //GETTERS
     public static ArrayList<Double> getcircletimes(){
         return bestTimesCircle;
     }
@@ -164,6 +181,8 @@ public static void StatsMain(String[] args) {
         return bestTimes;
     }
 
+    //Method to save the best times to a CSV file
+    //The file will be named "stats.csv" and will be created in the current working directory.
     public static void saveStatsToCSV() {
         try {
             FileWriter writer = new FileWriter("stats.csv");
@@ -200,6 +219,8 @@ public static void StatsMain(String[] args) {
         }
     }
 
+    //Method to load the best times from a CSV file
+    //The file will be named "stats.csv" and will be created in the current working directory.
     public static void loadStatsFromCSV() {
         bestTimesCircle.clear();
         bestTimesFigureEight.clear();

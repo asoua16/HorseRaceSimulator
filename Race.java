@@ -1,3 +1,9 @@
+/**
+ * Does Race simulation
+ *
+ * @AssiaOuaoua 
+ * @27/04/2025
+ */
 import java.util.ArrayList;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -71,7 +77,7 @@ public class Race
             public void actionPerformed(ActionEvent e) {
                 boolean finished = false;
                 int allfallen = 0;
-                String winnerName = "None"; 
+                Horse winner = null;
                 long raceEndTime = 0;
                 double raceTimeSeconds = 0;  
     
@@ -79,7 +85,7 @@ public class Race
                     moveHorse(horse);
     
                     if (raceWonBy(horse)) {
-                        winnerName = horse.getName();
+                        winner = horse;
                         raceEndTime = System.currentTimeMillis();
                         raceTimeSeconds = (raceEndTime - raceStartTime) / 1000.0;
                         horse.addwin();
@@ -104,11 +110,20 @@ public class Race
                 if (finished) {
                     ((Timer) e.getSource()).stop();
     
-                    double totalTime = (System.currentTimeMillis() - raceStartTime) / 1000.0;    
+                    double totalTime = (System.currentTimeMillis() - raceStartTime) / 1000.0;
+                    if(winner ==null){
+                        JOptionPane.showMessageDialog(
+                        frame,
+                        "Race Over!\nWinner: None" + "\nTime: " + totalTime + " seconds");
+                    }
+                    else{
                     JOptionPane.showMessageDialog(
                         frame,
-                        "Race Over!\nWinner: " + winnerName + "\nTime: " + totalTime + " seconds"
+                        "Race Over!\nWinner: " + winner.getName() + "\nTime: " + totalTime + " seconds"
                     );
+                    }
+
+                    Betting.resolveBets(winner);
 
                     for(Horse horse : allhorses) {
                         horse.addrace();
@@ -126,6 +141,8 @@ public class Race
         timer.start();
     }
 
+    /// Method to save horse data to a CSV file
+    /// The file will be named "horses.csv" and will be created in the current working directory.
     public static void saveHorsesToCSV() {
         try {
             FileWriter writer = new FileWriter("horses.csv");
@@ -183,6 +200,7 @@ public class Race
         }
     }
 
+    /// Method to set the weather conditions
     private void weather(){
         String weather = MainMenu.getweather();
         for(Horse horse : allhorses){
@@ -204,6 +222,8 @@ public class Race
 
     }
 
+    /// Method to move a horse forward
+    /// If the horse has fallen, it will not move forward
     private void moveHorse(Horse theHorse) {
         if (!theHorse.hasFallen()) {
             if (Math.random() < (0.1 * theHorse.getConfidence())) {
