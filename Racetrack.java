@@ -41,7 +41,8 @@ public class Racetrack extends JPanel {
                 int horseX = centerX + (int)(laneRadius * Math.cos(angle));
                 int horseY = centerY + (int)(laneRadius * Math.sin(angle));
                 
-                g2d.fillOval(horseX-5, horseY-5, 10, 10);
+                g2d.setFont(new Font("Arial", Font.BOLD, 14)); 
+                g2d.drawString(horse.getSymbol() + "", horseX - 4, horseY + 5);       
             }
         } else if ("Figure-Eight".equals(lanetype)) {
             for (int i = 0; i < horses.size(); i++) {
@@ -71,8 +72,9 @@ public class Racetrack extends JPanel {
         
                 horseX = centerX + (int)(laneRadius * Math.cos(angle));
                 horseY += centerY + (int)(laneRadius * Math.sin(angle));
-                g2d.fillOval(horseX-5, horseY-5, 10, 10);
-
+                
+                g2d.setFont(new Font("Arial", Font.BOLD, 14)); 
+                g2d.drawString(horse.getSymbol() + "", horseX - 4, horseY + 5);       
             }
         }
         else if ("Oval".equals(lanetype)) {
