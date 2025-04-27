@@ -180,6 +180,7 @@ public class HorseManage {
 
     //Horse Management window
     public static void HorseMain(String[] args) {
+        loadHorsesFromCSV();
         if (mainFrame == null) {
             mainFrame = new JFrame("Horse Management System");
             mainFrame.setSize(600, 600);
@@ -218,11 +219,11 @@ public class HorseManage {
             JButton backButton = new JButton("Back to Main Menu");
             backButton.addActionListener(e -> {
                 mainFrame.dispose();
+                mainFrame = null;
             });
             gbc.gridy = 3;
             gbc.gridwidth = 2;
             mainPanel.add(backButton, gbc);
-            loadHorsesFromCSV();
         }
         updateHorseList();
     }
@@ -254,7 +255,7 @@ public class HorseManage {
 
     public static void displayHorse(Horse horse) {
         JFrame horseFrame = new JFrame("Horse Details");
-        horseFrame.setSize(400, 300);
+        horseFrame.setSize(500, 400);
         horseFrame.setLocationRelativeTo(null); // Center on screen
 
         JPanel panel = new JPanel(new GridBagLayout());
@@ -316,16 +317,49 @@ public class HorseManage {
         gbc.gridx = 0;
         panel.add(new JLabel("Horse Speed Average:"), gbc);
         JTextField horseSpeedField = new JTextField(String.valueOf(horse.getaverageSpeed()), 20);
+        if (String.valueOf(horse.getaverageSpeed()).equals("NaN")) {
+            horseSpeedField.setText("No Wins Yet");
+        }
         horseSpeedField.setEditable(false);
         gbc.gridx = 1;
         panel.add(horseSpeedField, gbc);
-        if (horse.getaverageSpeed() > 0) {
+        if (horse.getaverageSpeed() > 15) {
             horseSpeedField.setBackground(Color.GREEN);
         } else {
             horseSpeedField.setBackground(Color.RED);
         }
         horseSpeedField.setOpaque(true); 
 
+        gbc.gridy = 6;
+        gbc.gridx = 0;
+        panel.add(new JLabel("Win Ratio:"), gbc);
+        JTextField winRatioField = new JTextField(String.valueOf(horse.getwinRatio()), 20);
+        if (String.valueOf(horse.getwinRatio()).equals("NaN")) {
+            winRatioField.setText("No Wins Yet");
+        }
+        winRatioField.setEditable(false);
+        gbc.gridx = 1;
+        panel.add(winRatioField, gbc);
+        if (horse.getwinRatio() > 0.5) {
+            winRatioField.setBackground(Color.GREEN);
+        } else {
+            winRatioField.setBackground(Color.RED);
+        }
+        winRatioField.setOpaque(true);
+
+        gbc.gridy = 7;
+        gbc.gridx = 0;
+        panel.add(new JLabel("Horse Confidence Average:"), gbc);
+        JTextField horseConfidenceField = new JTextField(String.valueOf(horse.getaverageConfidence()), 20);
+        horseConfidenceField.setEditable(false);
+        gbc.gridx = 1;
+        panel.add(horseConfidenceField, gbc);
+        if(horse.getaverageConfidence() > 0.5){
+            horseConfidenceField.setBackground(Color.GREEN);
+        } else {
+            horseConfidenceField.setBackground(Color.RED);
+        }
+        horseConfidenceField.setOpaque(true);
     }
 
     public static void saveHorsesToCSV() {
@@ -333,7 +367,7 @@ public class HorseManage {
             FileWriter writer = new FileWriter("horses.csv");
             writer.write(
                 "Name,Symbol,Breed,CoatColor,Horseshoe,Accessories," +
-                "Confidence,HorseSpeed,SpeedHistory," +
+                "Confidence,BaseSpeed,SpeedHistory," +
                 "Wins,Races,ConfidenceHistory\n"
             );
     
@@ -347,9 +381,9 @@ public class HorseManage {
                 }
     
                 String speedHist = "";
-                for (int i = 0; i < h.horseSpeed.size(); i++) {
-                    speedHist += h.horseSpeed.get(i);
-                    if (i < h.horseSpeed.size() - 1) {
+                for (int i = 0; i < h.horseSpeedList.size(); i++) {
+                    speedHist += h.horseSpeedList.get(i);
+                    if (i < h.horseSpeedList.size() - 1) {
                         speedHist += ";";
                     }
                 }
@@ -370,7 +404,7 @@ public class HorseManage {
                     (h.horseShoe == null ? "" : h.horseShoe) + "," +
                     accCell + "," +
                     h.horseConfidence + "," +
-                    h.horsespeed + "," +
+                    h.basespeed + "," +
                     speedHist + "," +
                     h.wins + "," +
                     h.races + "," +
@@ -409,7 +443,7 @@ public class HorseManage {
                 }
     
                 double confidence = Double.parseDouble(f[6]);
-                double speed = Double.parseDouble(f[7]);
+                double basespeed = Double.parseDouble(f[7]);
     
                 ArrayList<Double> speedHist = new ArrayList<>();
                 if (!f[8].isEmpty()) {
@@ -435,8 +469,8 @@ public class HorseManage {
                 h.horseShoe = shoe;
                 h.horseAccessories = accessories;
                 h.horseConfidence = confidence;
-                h.horsespeed = speed;
-                h.horseSpeed = speedHist;
+                h.basespeed = basespeed;
+                h.horseSpeedList = speedHist;
                 h.wins = wins;
                 h.races = races;
                 h.horseConfidenceList = confHist;

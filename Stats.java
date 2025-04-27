@@ -13,6 +13,7 @@ public class Stats {
     private static JFrame mainFrame;
 
 public static void StatsMain(String[] args) {
+        loadStatsFromCSV();
         if (mainFrame == null) {
             mainFrame = new JFrame("Horse Management System");
             mainFrame.setSize(600, 600);
@@ -41,9 +42,10 @@ public static void StatsMain(String[] args) {
 
             JButton backButton = new JButton("Back to Main Menu");
             backButton.addActionListener(e -> {
-                mainFrame.setVisible(false);
-                MainMenu.main(null);  
+                mainFrame.dispose();
+                mainFrame = null;
             });
+            
             gbc.gridy = 3;
             mainPanel.add(backButton, gbc);
 

@@ -20,8 +20,9 @@ public class Horse
     int horseDistance;
     boolean fallen;
     double horseConfidence;
+    double basespeed;
     double horsespeed;
-    ArrayList<Double> horseSpeed = new ArrayList<Double>();
+    ArrayList<Double> horseSpeedList = new ArrayList<Double>();
     int wins;
     int races;
     int falls;
@@ -39,7 +40,8 @@ public class Horse
         this.horseBreed = breed;
         this.horseCoatcolor = coatcolor;
         this.horseConfidence = rand.nextDouble();
-        this.horsespeed = rand.nextInt(10)+1;
+        this.basespeed = rand.nextInt(10) + 1;
+        this.horsespeed = basespeed; 
     }
 
     public Horse(char horseSymbol, String horseName, String breed, String coatcolor, String horseshoe, ArrayList<String> accessories)
@@ -52,7 +54,8 @@ public class Horse
         this.horseShoe = horseshoe;
         this.horseAccessories = accessories;
         this.horseConfidence = rand.nextDouble();
-        this.horsespeed = rand.nextInt(10)+1;
+        this.basespeed = rand.nextInt(10) + 1;
+        this.horsespeed = basespeed; 
     }
 
 
@@ -111,26 +114,31 @@ public class Horse
         horseDistance = 0;
     }
 
-    public double getwinratio(){
-        double ratio = (double) wins / (double) races;
-        return ratio;
-    }
-
-    public double getaverageSpeed(){
-        double sum = 0;
-        for (double speed : horseSpeed) {
-            sum += speed;
+    public double getaverageSpeed() {
+        if (horseSpeedList.isEmpty()){
+            return 0.0;
+        } 
+        double sum = 0.0;
+        for (double s : horseSpeedList) {
+            sum += s;
         }
-        System.out.println(sum/horseSpeed.size());
-        return sum / horseSpeed.size();
+        return sum / horseSpeedList.size();
     }
 
-    public double getaverageConfidence(){
-        double sum = 0;
-        for (double confidence : horseConfidenceList) {
-            sum += confidence;
+    public double getaverageConfidence() {
+        if (horseConfidenceList.isEmpty()) {
+            return horseConfidence;
+        }
+        double sum = 0.0;
+        for (double c : horseConfidenceList){
+            sum += c;
         }
         return sum / horseConfidenceList.size();
+    }
+
+    public double getwinRatio(){
+        double ratio = (double) wins / (double) races;
+        return ratio;
     }
 
     public boolean hasFallen()
@@ -155,19 +163,23 @@ public class Horse
         if(horseBreed.equals("Quarter Horse")){
             horsespeed += 2;
             horseConfidence += 0.1;
+            SpeedLimit();
         }
         else if(horseBreed.equals("Arabian")){
             horseConfidence += 0.2;
             horsespeed += 1;
+            SpeedLimit();
         }
         else if(horseBreed.equals("Thoroughbred")){
             horsespeed += 1;
+            SpeedLimit();
             horseConfidence += 0.3;
         }
 
         for(String accessory : horseAccessories) {
             if (accessory.equals("Saddle")) {
                 horsespeed += 1;
+                SpeedLimit();
             } 
             else if (accessory.equals("Bridle")) {
                 horseConfidence += 0.2;
@@ -179,20 +191,32 @@ public class Horse
 
         if(horseShoe.equals("Regular")){
             horsespeed += 1;
+            SpeedLimit();
         }
         else if(horseShoe.equals("Lightweight")){
             horsespeed += 2;
+            SpeedLimit();
             horseConfidence += 0.1;
         }
         else if(horseShoe.equals("Iron")){
             horsespeed += 3;
+            SpeedLimit();
             horseConfidence += 0.2;
         }
+
+
     }
 
-    public void addSpeed(double time, int tracklength){
-        double speed = (tracklength / time) * 0.1;
-        horseSpeed.add(speed);
+    public void resetSpeed() {
+        this.horsespeed = this.basespeed;
+    }
+
+    public void addSpeed(double time, int trackLength) {
+        if (time <= 0){
+            return; 
+        }
+        double speed = (trackLength / time) * 0.1;
+        horseSpeedList.add(speed);
     }
 
     public void addrace(){
@@ -201,6 +225,32 @@ public class Horse
 
     public void addwin(){
         this.wins++;
+    }
+
+    public void addconfidence(){
+        horseConfidenceList.add(horseConfidence);
+    }
+
+    public void changeConfidence(boolean increase) {
+        if (increase) {
+            horseConfidence += 0.1;
+        } else {
+            horseConfidence -= 0.1;
+        }
+        // if out of [0,1], reset randomly
+        if (horseConfidence < 0.0 || horseConfidence > 1.0) {
+            horseConfidence = new Random().nextDouble();
+        }
+        addconfidence();
+    }
+
+    private void SpeedLimit() {
+        if (this.horsespeed > 10) {
+            setSpeed(new Random().nextInt(10) + 1);
+        }
+        if (this.horsespeed < 1) {
+            setSpeed(1);
+        }
     }
     
     //Setter Methods
@@ -222,11 +272,11 @@ public class Horse
     public void setConfidence(double newConfidence)
     {
         this.horseConfidence = newConfidence;
-        this.horseConfidenceList.add(this.horseConfidence);
     }
 
     public void setSpeed(double newspeed){
         this.horsespeed = newspeed;
+        SpeedLimit();
     }
 
     public void setSymbol(char newSymbol)

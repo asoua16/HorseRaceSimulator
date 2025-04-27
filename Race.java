@@ -50,6 +50,7 @@ public class Race
      */
     public void addHorses(ArrayList<Horse> horses)
     {
+        allhorses.clear();
         allhorses.addAll(horses);
     }
 
@@ -60,6 +61,9 @@ public class Race
      * race is finished
      */
     public void startRace() {
+        for (Horse horse : allhorses) {
+            horse.resetSpeed();
+        }
         weather();
         long raceStartTime = System.currentTimeMillis();
     
@@ -69,7 +73,7 @@ public class Race
                 int allfallen = 0;
                 String winnerName = "None"; 
                 long raceEndTime = 0;
-                double raceTimeSeconds =0;  
+                double raceTimeSeconds = 0;  
     
                 for (Horse horse : allhorses) {
                     moveHorse(horse);
@@ -78,28 +82,24 @@ public class Race
                         winnerName = horse.getName();
                         raceEndTime = System.currentTimeMillis();
                         raceTimeSeconds = (raceEndTime - raceStartTime) / 1000.0;
-                        horse.addSpeed(raceTimeSeconds, raceLength);
-                        finished = true;
                         horse.addwin();
-                        horse.addrace();
+                        horse.changeConfidence(true);
+                        finished = true;
                         break;
 
                     } else if (horse.hasFallen()) {
                         allfallen++;
-                        horse.setSymbol('X');
-                        break;
                     }
     
                     if (allfallen == allhorses.size()) {
                         JOptionPane.showMessageDialog(frame, "All horses have fallen!");
                         finished = true;
-                        horse.addrace();
+                        horse.changeConfidence(false);
                         break;
                     }
                 }
     
                 racetrack.repaint();
-                allfallen = 0;
     
                 if (finished) {
                     ((Timer) e.getSource()).stop();
@@ -110,22 +110,28 @@ public class Race
                         "Race Over!\nWinner: " + winnerName + "\nTime: " + totalTime + " seconds"
                     );
 
+                    for(Horse horse : allhorses) {
+                        horse.addrace();
+                        horse.addSpeed(raceTimeSeconds, raceLength);
+                        horse.addconfidence();
+                    }
+
                     Stats.racetracksort(raceTimeSeconds);
+                    saveHorsesToCSV();
                     frame.dispose();
                 }
             }
         });
     
-        saveHorsesToCSV();
         timer.start();
     }
 
     public static void saveHorsesToCSV() {
         try {
-            FileWriter writer = new FileWriter("horses.csv", true);
+            FileWriter writer = new FileWriter("horses.csv");
             writer.write(
                 "Name,Symbol,Breed,CoatColor,Horseshoe,Accessories," +
-                "Confidence,HorseSpeed,SpeedHistory," +
+                "Confidence,BaseSpeed,SpeedHistory," +
                 "Wins,Races,ConfidenceHistory\n"
             );
     
@@ -139,9 +145,9 @@ public class Race
                 }
     
                 String speedHist = "";
-                for (int i = 0; i < h.horseSpeed.size(); i++) {
-                    speedHist += h.horseSpeed.get(i);
-                    if (i < h.horseSpeed.size() - 1) {
+                for (int i = 0; i < h.horseSpeedList.size(); i++) {
+                    speedHist += h.horseSpeedList.get(i);
+                    if (i < h.horseSpeedList.size() - 1) {
                         speedHist += ";";
                     }
                 }
@@ -162,7 +168,7 @@ public class Race
                     (h.horseShoe == null ? "" : h.horseShoe) + "," +
                     accCell + "," +
                     h.horseConfidence + "," +
-                    h.horsespeed + "," +
+                    h.basespeed + "," +
                     speedHist + "," +
                     h.wins + "," +
                     h.races + "," +
