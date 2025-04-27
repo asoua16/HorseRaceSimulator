@@ -23,10 +23,17 @@ public class Horse
        this.horseSymbol = horseSymbol;
        this.horseName = horseName;
        this.horseConfidence = horseConfidence;
+       if (horseConfidence < 0)
+       {
+           horseConfidence = 0;
+       }
+       else if (horseConfidence > 1)
+       {
+           horseConfidence = 1;
+       }
+       this.horseConfidence = horseConfidence;
        this.distanceTravelled = 0;
     }
-    
-    
     
     //Other methods of class Horse
     public void fall()
