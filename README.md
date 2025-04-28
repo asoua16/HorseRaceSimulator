@@ -1,6 +1,8 @@
 # HorseRaceSimulator
 ECS414U Coursework
 
+https://github.com/asoua16/HorseRaceSimulator
+
 To start the program use the main() method in MainManu.java.
 
 1. Press Horse Management
