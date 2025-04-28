@@ -159,7 +159,7 @@ public class Race
      */
     private void printRace()
     {
-        System.out.print('\u000C');  //clear the terminal window
+        System.out.print('X');  //clear the terminal window
         
         multiplePrint('=',raceLength+3); //top edge of track
         System.out.println();

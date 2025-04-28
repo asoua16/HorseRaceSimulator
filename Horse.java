@@ -25,13 +25,16 @@ public class Horse
        this.horseConfidence = horseConfidence;
        if (horseConfidence < 0)
        {
-           horseConfidence = 0;
+           this.horseConfidence = 0;
        }
        else if (horseConfidence > 1)
        {
-           horseConfidence = 1;
+           this.horseConfidence = 1;
        }
-       this.horseConfidence = horseConfidence;
+       else
+       {
+        this.horseConfidence = horseConfidence;
+       }
        this.distanceTravelled = 0;
     }
     
@@ -78,7 +81,18 @@ public class Horse
 
     public void setConfidence(double newConfidence)
     {
-        horseConfidence = newConfidence;
+        if (newConfidence < 0)
+        {
+            horseConfidence = 0;
+        }
+        else if (newConfidence > 1)
+        {
+            horseConfidence = 1;
+        }
+        else
+        {
+            horseConfidence = newConfidence;
+        }
     }
     
     public void setSymbol(char newSymbol)
