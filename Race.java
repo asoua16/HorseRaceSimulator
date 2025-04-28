@@ -95,6 +95,7 @@ public class Race
 
                     } else if (horse.hasFallen()) {
                         allfallen++;
+                        horse.setSymbol('X');
                     }
     
                     if (allfallen == allhorses.size()) {
